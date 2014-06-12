@@ -4,7 +4,7 @@
 <widget xmlns     = "http://www.w3.org/ns/widgets"
         xmlns:gap = "http://phonegap.com/ns/1.0"
         id        = "pl.com.intercars.warsztaty"
-        version   = "1.0.0">
+        version   = "1.1">
 
     <name>Inter Cars sieć warsztatów</name>
 
@@ -59,7 +59,6 @@
 	<gap:plugin name="nl.x-services.plugins.toast" version="2.0" />
 	<gap:plugin name="de.appplant.cordova.plugin.email-composer" version="0.8.1" />
 	<gap:plugin name="org.apache.cordova.file" version="1.0.1" />
-	<gap:plugin name="com.plugins.shortcut" version="0.1.1" />
 	
     <!-- Define app icon for each platform. -->
     <icon src="icon.png" />
