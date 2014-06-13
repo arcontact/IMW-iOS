@@ -127,7 +127,7 @@ var	warsztaty = [],
 					}
 				});
 				if(navigator.geolocation){
-					navigator.geolocation.getCurrentPosition(setcurrentPosition,function(a){});
+					navigator.geolocation.getCurrentPosition(setcurrentPosition,function(a){},{timeout:10000});
 				}
 			} else {
 				render = false;
@@ -800,7 +800,7 @@ var	warsztaty = [],
 									loadComplete = true;
 									clearInterval(everythingLoaded);
 									if(navigator.geolocation){
-										navigator.geolocation.getCurrentPosition(displayPosition,geolocationError);
+										navigator.geolocation.getCurrentPosition(displayPosition,geolocationError,{timeout:10000});
 									} else {
 										geolocationError();
 									}
@@ -814,7 +814,7 @@ var	warsztaty = [],
 							},100);
 						} else {
 							if(navigator.geolocation){
-								navigator.geolocation.getCurrentPosition(displayPosition,geolocationError);
+								navigator.geolocation.getCurrentPosition(displayPosition,geolocationError,{timeout:10000});
 							} else {
 								geolocationError();
 							}
@@ -987,7 +987,7 @@ var	warsztaty = [],
 								loadComplete = true;
 								clearInterval(everythingLoaded);
 								if(navigator.geolocation){
-									navigator.geolocation.getCurrentPosition(displayPosition,geolocationError);
+									navigator.geolocation.getCurrentPosition(displayPosition,geolocationError,{timeout:10000});
 								} else {
 									geolocationError();
 								}
@@ -1001,7 +1001,7 @@ var	warsztaty = [],
 						},100);
 					} else {
 						if(navigator.geolocation){
-							navigator.geolocation.getCurrentPosition(displayPosition,geolocationError);
+							navigator.geolocation.getCurrentPosition(displayPosition,geolocationError,{timeout:10000});
 						} else {
 							geolocationError();
 						}
