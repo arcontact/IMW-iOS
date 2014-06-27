@@ -111,7 +111,7 @@ var	warsztaty = [],
 		$("#address2").remove();
 		if(type == 2){
 			if(gotConnection()){
-				$('#order').append('<input type="text" id="address2" placeholder="Wprowadź adres (autouzupełnianie)" style="margin:0px" />');
+				$('#order').append('<input type="text" id="address2" placeholder="Wprowadź adres (autouzupełnianie)" />');
 				var input2 = $("#address2").get(0);
 				var autocomplete2 = new google.maps.places.Autocomplete(input2);
 				google.maps.event.addListener(autocomplete2, 'place_changed', function() {
@@ -127,7 +127,7 @@ var	warsztaty = [],
 					}
 				});
 				if(navigator.geolocation){
-					navigator.geolocation.getCurrentPosition(setcurrentPosition,function(a){},{timeout:10000});
+					navigator.geolocation.getCurrentPosition(setcurrentPosition,function(a){},{timeout:5000});
 				}
 			} else {
 				render = false;
@@ -294,30 +294,10 @@ var	warsztaty = [],
 	}
 	function renderWarsztaty(){
 		if(!warsztaty_pagination_loaded){
-			$("body").prepend('<div class="text-center pagination_outer warsztaty_pagination_outer"><div class="relative"><a class="toggleForm" data-state="0">&#x25B2;</a><div class="warsztaty_pagination pagination"><a href="#" class="first" data-action="first">&laquo;</a><a href="#" class="previous" data-action="previous">&lsaquo;</a><input type="text" readonly="readonly" /><a href="#" class="next" data-action="next">&rsaquo;</a><a href="#" class="last" data-action="last">&raquo;</a></div><input type="search" placeholder="nazwa, miasto lub ulica" id="warsztat_search" onchange="return warsztaty_filter(this.value);" /><div id="order"><select onchange="return warsztaty_order(this.value);"><option value="1">alfabetycznie wg miast</option><option value="2">najmniejsza odległość</option></select></div></div></div>');
+			$("body").prepend('<div class="text-center pagination_outer warsztaty_pagination_outer"><div class="relative"><div class="warsztaty_pagination pagination"><a href="#" class="first" data-action="first">&laquo;</a><a href="#" class="previous" data-action="previous">&lsaquo;</a><input type="text" readonly="readonly" /><a href="#" class="next" data-action="next">&rsaquo;</a><a href="#" class="last" data-action="last">&raquo;</a></div></div></div>');
 			if(!mapRenderWarsztaty){
 				$(".warsztaty_pagination_outer").fadeIn(200);
 			}
-			$(".toggleForm").on("click",function(){
-				var state = $(this).attr("data-state");
-				if(state == 0){
-					$(this).attr("data-state",1).html("&#x25BC;");
-					$(".warsztaty_pagination_outer").animate({
-						"bottom":0
-					},200,"easeInExpo");
-					$("#warsztaty ul").animate({
-						"margin-bottom":(_order==1 ? 130 : 167)
-					},200,"easeInExpo");
-				} else {
-					$(this).attr("data-state",0).html("&#x25B2;");
-					$(".warsztaty_pagination_outer").animate({
-						"bottom":(_order==1 ? -95 : -132)
-					},200,"easeOutExpo");
-					$("#warsztaty ul").animate({
-						"margin-bottom":35
-					},200,"easeOutExpo");
-				}
-			});
 			warsztaty_pagination_loaded = true;
 		}
 		if(_warsztaty.length <= 0 && !_search){
@@ -800,7 +780,7 @@ var	warsztaty = [],
 									loadComplete = true;
 									clearInterval(everythingLoaded);
 									if(navigator.geolocation){
-										navigator.geolocation.getCurrentPosition(displayPosition,geolocationError,{timeout:10000});
+										navigator.geolocation.getCurrentPosition(displayPosition,geolocationError,{timeout:5000});
 									} else {
 										geolocationError();
 									}
@@ -814,7 +794,7 @@ var	warsztaty = [],
 							},100);
 						} else {
 							if(navigator.geolocation){
-								navigator.geolocation.getCurrentPosition(displayPosition,geolocationError,{timeout:10000});
+								navigator.geolocation.getCurrentPosition(displayPosition,geolocationError,{timeout:5000});
 							} else {
 								geolocationError();
 							}
@@ -987,7 +967,7 @@ var	warsztaty = [],
 								loadComplete = true;
 								clearInterval(everythingLoaded);
 								if(navigator.geolocation){
-									navigator.geolocation.getCurrentPosition(displayPosition,geolocationError,{timeout:10000});
+									navigator.geolocation.getCurrentPosition(displayPosition,geolocationError,{timeout:5000});
 								} else {
 									geolocationError();
 								}
@@ -1001,7 +981,7 @@ var	warsztaty = [],
 						},100);
 					} else {
 						if(navigator.geolocation){
-							navigator.geolocation.getCurrentPosition(displayPosition,geolocationError,{timeout:10000});
+							navigator.geolocation.getCurrentPosition(displayPosition,geolocationError,{timeout:5000});
 						} else {
 							geolocationError();
 						}
