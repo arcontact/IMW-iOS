@@ -823,7 +823,7 @@ var	warsztaty = [],
 				targetID = eventData.toPage;
 				$('header ul li a[href="'+targetID+'"]').addClass("active");
 			});
-			$(".loader").animate({"opacity":0},500,"easeOutExpo",function(){this.remove();});
+			//$(".loader").animate({"opacity":0},500,"easeOutExpo",function(){this.remove();});
 			$("#page1 footer").animate({"bottom":0},500,"easeOutExpo");
 			$(".clearAddress").on("click",function(){
 				$("#address").val('');
