@@ -1022,13 +1022,12 @@ var app = {
 		window.plugins.toast.showLongCenter('Brak połączenia z internetem.',function(a){},function(b){});
 	},
 	onOnline: function() {
-		window.plugins.toast.showLongCenter('Nawiązano połączenie z internetem.',function(a){},function(b){});
-		if(!artykuly_loaded){
+		if(artykuly_loaded == false){
 			feedArtykuly();
 		}
-		if(!warsztaty_loaded){
+		if(warsztaty_loaded == false){
 			checkVersion();
-			if(new_version) {
+			if(new_version == true) {
 				feedWarsztaty();
 			} else {
 				window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fs){
