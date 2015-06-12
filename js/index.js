@@ -110,6 +110,9 @@ var	warsztaty = [],
 		renderWarsztaty(value);
 	}
 	function warsztaty_order(type){
+		var filter_select = document.getElementById('filter_select');
+		filter_select.selectedIndex = 0;
+	
 		_order = type;
 		var render = true;
 		$("#address2").remove();
