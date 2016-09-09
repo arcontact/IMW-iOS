@@ -477,7 +477,7 @@ var	warsztaty = [],
 		var	item = use_warsztaty[id],
 			mailbody = '<p>Warsztat:<br />'+item.konto+'<br />'+item.ulica+'<br />'+item.kod.substr(0,2)+'-'+item.kod.substr(2)+' '+item.miasto+'</p>',
 			subject = 'Zapytanie z aplikacji mobilnej Inter Cars sieć warsztatów.';
-		window.plugins.EmailComposer.showEmailComposer(subject,mailbody,[form_email],[],[],true,[]);
+		window.plugins.EmailComposer.showEmailComposerWithCallback(null,subject,mailbody,[form_email],[],[],true,[]);
 	}
 	function warsztatyLoadError(){
 		if(gotConnection()) {
@@ -928,7 +928,7 @@ var	warsztaty = [],
 				happy:function(){
 					var mailbody1 = '<p>Dane z formularza:</p><p>typ auta: '+$("#formtyp").val()+'<br />numer VIN: '+$("#vin").val()+'<br />marka, model, silnik: '+$("#marka").val()+'<br />rok produkcji: '+$("#rok").val()+'<br />rodzaj paliwa: '+$("#paliwo").val()+'<br />numer rejestracyjny: '+$("#rejestr").val()+'<br />usługa do wyceny: '+$("#usluga").val()+'<br />e-mail: '+$("#email").val()+'<br />numer telefonu: '+$("#tel").val()+'<br />miasto: '+$("#miasto").val()+'</p>';
 					var subject = 'Zapytanie z aplikacji mobilnej Inter Cars sieć warsztatów.';
-					window.plugins.EmailComposer.showEmailComposer(subject,mailbody1,[form_email],[],[],true,[]);
+					window.plugins.EmailComposer.showEmailComposerWithCallback(null,subject,mailbody1,[form_email],[],[],true,[]);
 				}
 			});
 			if(gotConnection()){
