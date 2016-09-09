@@ -48,7 +48,7 @@
     <plugin name="cordova-plugin-splashscreen"        source="npm" spec="~3.2.1" />
 	<plugin name="cordova-plugin-whitelist"           source="npm" spec="~1.2.1" />
 	<plugin name="nl.x-services.plugins.toast" spec="2.0.2" source="pgb" />
-	<plugin name="com.badrit.emailcomposer" spec="0.1.0" source="pgb" />
+	<plugin spec="https://github.com/katzer/cordova-plugin-email-composer#0.8.2" 	  source="git"  />
 	
 	<platform name="ios">
 		<icon src="res/icon/ios/icon-60@3x.png" width="180" height="180" />
