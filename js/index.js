@@ -956,6 +956,10 @@ var	warsztaty = [],
 					warsztaty_from_file = true;
 				}
 			}
+			$(document).on("pageshow","#page1",function(){
+				$(".articles_pagination_outer").stop().fadeOut(100);
+				$(".warsztaty_pagination_outer").stop().fadeOut(100);
+			});
 			$(document).on("pagebeforeshow","#page2",function(){
 				if(articles_first_load){
 					articles_first_load = false;
