@@ -871,19 +871,18 @@ var	warsztaty = [],
 		$(".input-outer").hide();
 	}
 	function reloadScripts(){
-			$("header ul li a").removeClass("active");
+			$("header ul.list-2 li a").removeClass("active");
 			var targetID = $(".ui-page-active").attr('id');
-			$('header ul li a[href="'+targetID+'"]').addClass("active");
+			$('header ul.list-2 li a[href="'+targetID+'"]').addClass("active");
 			$("header .logo").on("click",function(){
-				$("header ul li a").removeClass("active");
+				$("header ul.list-2 li a").removeClass("active");
 			});
 			$(document).on("pagebeforechange",function(e,eventData){
-				$("header ul li a").removeClass("active");
+				$("header ul.list-2 li a").removeClass("active");
 				targetID = eventData.toPage;
-				$('header ul li a[href="'+targetID+'"]').addClass("active");
+				$('header ul.list-2 li a[href="'+targetID+'"]').addClass("active");
 			});
-			//$(".loader").animate({"opacity":0},500,"easeOutExpo",function(){this.remove();});
-			$("#page1 footer").animate({"bottom":0},500,"easeOutExpo");
+			$(".loader").animate({"opacity":0},500,"easeOutExpo",function(){this.remove();});
 			$(".clearAddress").on("click",function(){
 				$("#address").val('');
 			});
