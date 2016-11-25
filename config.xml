@@ -4,7 +4,7 @@
 <widget xmlns     = "http://www.w3.org/ns/widgets"
         xmlns:gap = "http://phonegap.com/ns/1.0"
         id        = "pl.com.intercars.warsztaty"
-        version   = "1.2.9">
+        version   = "1.3">
 
     <name>Inter Cars sieć warsztatów</name>
 
@@ -21,7 +21,7 @@
 	<content src="index.html" />
 	
 	<preference name="phonegap-version"      	  value="cli-6.3.0" />
-    <preference name="orientation"                value="all" />
+    <preference name="orientation"                value="portrait" />
     <preference name="target-device"              value="universal" />
     <preference name="fullscreen"                 value="true" />
     <preference name="webviewbounce"              value="true" />
@@ -47,7 +47,7 @@
     <plugin name="cordova-plugin-network-information" source="npm" spec="~1.2.0" />
     <plugin name="cordova-plugin-splashscreen"        source="npm" spec="~3.2.1" />
 	<plugin name="cordova-plugin-whitelist"           source="npm" spec="~1.2.1" />
-	<plugin name="nl.x-services.plugins.toast" spec="2.0.2" source="pgb" />
+	<plugin name="cordova-plugin-x-toast"             source="npm" />
 	<plugin name="cordova-plugin-email-composer" 	  source="npm" spec="0.8.3"  />
 	
 	<platform name="ios">
