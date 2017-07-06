@@ -27,6 +27,8 @@ $(document).ready(function(){$(document.body).transition("init").show()}),functi
 ;(function(e){"use strict";e.jqPagination=function(t,n){var r=this;r.$el=e(t);r.el=t;r.$input=r.$el.find("input");r.$el.data("jqPagination",r);r.init=function(){r.options=e.extend({},e.jqPagination.defaultOptions,n);r.options.max_page===null&&(r.$input.data("max-page")!==undefined?r.options.max_page=r.$input.data("max-page"):r.options.max_page=1);r.$input.data("current-page")!==undefined&&r.isNumber(r.$input.data("current-page"))&&(r.options.current_page=r.$input.data("current-page"));r.$input.removeAttr("readonly");r.updateInput(!0);r.$input.on("focus.jqPagination mouseup.jqPagination",function(t){if(t.type==="focus"){var n=parseInt(r.options.current_page,10);e(this).val(n).select()}if(t.type==="mouseup")return!1});r.$input.on("blur.jqPagination keydown.jqPagination",function(t){var n=e(this),i=parseInt(r.options.current_page,10);if(t.keyCode===27){n.val(i);n.blur()}t.keyCode===13&&n.blur();t.type==="blur"&&r.setPage(n.val())});r.$el.on("click.jqPagination","a",function(t){var n=e(this);if(n.hasClass("disabled"))return!1;if(!t.metaKey&&!t.ctrlKey){t.preventDefault();r.setPage(n.data("action"))}})};r.setPage=function(e,t){if(e===undefined)return r.options.current_page;var n=parseInt(r.options.current_page,10),i=parseInt(r.options.max_page,10);if(isNaN(parseInt(e,10)))switch(e){case"first":e=1;break;case"prev":case"previous":e=n-1;break;case"next":e=n+1;break;case"last":e=i}e=parseInt(e,10);if(isNaN(e)||e<1||e>i){r.setInputValue(n);return!1}r.options.current_page=e;r.$input.data("current-page",e);r.updateInput(t)};r.setMaxPage=function(e,t){if(e===undefined)return r.options.max_page;if(!r.isNumber(e)){console.error("jqPagination: max_page is not a number");return!1}if(e<r.options.current_page){console.error("jqPagination: max_page lower than current_page");return!1}r.options.max_page=e;r.$input.data("max-page",e);r.updateInput(t)};r.updateInput=function(e){var t=parseInt(r.options.current_page,10);r.setInputValue(t);r.setLinks(t);e!==!0&&r.options.paged(t)};r.setInputValue=function(e){var t=r.options.page_string,n=r.options.max_page;t=t.replace("{current_page}",e).replace("{max_page}",n);r.$input.val(t)};r.isNumber=function(e){return!isNaN(parseFloat(e))&&isFinite(e)};r.setLinks=function(e){var t=r.options.link_string,n=parseInt(r.options.current_page,10),i=parseInt(r.options.max_page,10);if(t!==""){var s=n-1;s<1&&(s=1);var o=n+1;o>i&&(o=i);r.$el.find("a.first").attr("href",t.replace("{page_number}","1"));r.$el.find("a.prev, a.previous").attr("href",t.replace("{page_number}",s));r.$el.find("a.next").attr("href",t.replace("{page_number}",o));r.$el.find("a.last").attr("href",t.replace("{page_number}",i))}r.$el.find("a").removeClass("disabled");n===i&&r.$el.find(".next, .last").addClass("disabled");n===1&&r.$el.find(".previous, .first").addClass("disabled")};r.callMethod=function(t,n,i){switch(t.toLowerCase()){case"option":if(i===undefined&&typeof n!="object")return r.options[n];var s={trigger:!0},o=!1;e.isPlainObject(n)&&!i?e.extend(s,n):s[n]=i;var u=s.trigger===!1;s.current_page!==undefined&&(o=r.setPage(s.current_page,u));s.max_page!==undefined&&(o=r.setMaxPage(s.max_page,u));o===!1&&console.error("jqPagination: cannot get / set option "+n);return o;case"destroy":r.$el.off(".jqPagination").find("*").off(".jqPagination");break;default:console.error('jqPagination: method "'+t+'" does not exist');return!1}};r.init()};e.jqPagination.defaultOptions={current_page:1,link_string:"",max_page:null,page_string:"Strona {current_page} z {max_page}",paged:function(){}};e.fn.jqPagination=function(){var t=this,n=e(t),r=Array.prototype.slice.call(arguments),i=!1;if(typeof r[0]=="string"){r[2]===undefined?i=n.first().data("jqPagination").callMethod(r[0],r[1]):n.each(function(){i=e(this).data("jqPagination").callMethod(r[0],r[1],r[2])});return i}t.each(function(){new e.jqPagination(this,r[0])})}})(Zepto);if(!console){var console={},func=function(){return!1};console.log=func;console.info=func;console.warn=func;console.error=func};
 $(document.body).transition('options', {defaultPageTransition : 'fade', domCache : false});
 
+var development = true;
+
 var	warsztaty = [],
 	_warsztaty = [],
 	use_warsztaty = [],
@@ -60,13 +62,25 @@ var	warsztaty = [],
 	currentPosition = false,
 	warsztatShowPointId = false,
 	mapRenderWarsztaty = false,
+	hideLoader = false,
 	icons = {
 		qservicepremium:"img/mapicon1.png",
 		qservice:"img/mapicon2.png",
 		perfectservice:"img/mapicon3.png",
 		qservicetruck:"img/mapicon4.png"
 	};
-
+	
+	String.prototype.escapeDiacritics = function(){
+		return this.replace(/ą/g, 'a').replace(/Ą/g, 'A')
+			.replace(/ć/g, 'c').replace(/Ć/g, 'C')
+			.replace(/ę/g, 'e').replace(/Ę/g, 'E')
+			.replace(/ł/g, 'l').replace(/Ł/g, 'L')
+			.replace(/ń/g, 'n').replace(/Ń/g, 'N')
+			.replace(/ó/g, 'o').replace(/Ó/g, 'O')
+			.replace(/ś/g, 's').replace(/Ś/g, 'S')
+			.replace(/ż/g, 'z').replace(/Ż/g, 'Z')
+			.replace(/ź/g, 'z').replace(/Ź/g, 'Z');
+	}
 	function supports_html5_storage() {
 		try {
 			return 'localStorage' in window && window['localStorage'] !== null;
@@ -178,77 +192,86 @@ var	warsztaty = [],
 		return states[networkState];
 	}
 	function gotConnection(){
-		var a = checkConnection();
-		if(a == 'fail'){return false;}
-		return true;
+		if(development){
+			return true;
+		} else {
+			var a = checkConnection();
+			if(a == 'fail'){return false;}
+			return true;
+		}
 	}
 	function feedArtykuly(){
 		if(gotConnection()){
-			$.ajax({
-				url: artykulyUrl,
-				type: 'GET',
-				async: false,
-				cache: false,
-				dataType: 'xml',
-				success: function(response){
-					if(typeof response != 'undefined'){
-						artykuly = response;
-						artykuly_loaded = true;
-					} else {
-						artykuly_loaded = false;
-					}
-				},
-				error: function(){
-					artykuly_loaded = false;
-				}
-			});
-		} else {
-			window.plugins.toast.showLongCenter('Brak połączenia z internetem.',function(a){},function(b){});
-			artykuly_loaded = false;
-		}
-	}
-	function renderArtykuly(){
-		if(artykuly_loaded) {
-			var per_page = 10;
-			var list = document.createElement('ul');
-			var	xmlDoc = $(artykuly).children();
-			var c = $(xmlDoc).find('item');
-			var months = ["Stycznia", "Lutego", "Marca", "Kwietnia", "Maja", "Czerwca", "Lipca", "Sierpnia", "Września", "Października", "Listopada", "Grudnia"];
-			var page_count = 0;
-			var page_data = 0;
-			for(var i=0;i<c.length;i++){
-				var d = $(c[i]);
-				var title = $(d[0]).find('title').text();
-				var link = $(d[0]).find('link').text();
-				var pubDate = $(d[0]).find('pubDate').text();
-				var _date = new Date(Date.parse(pubDate));
-				var date_string = _date.getDate() + " " + months[_date.getMonth()] + " " + _date.getFullYear();
-				var li = document.createElement('li');
-				li.innerHTML = '<a onclick="window.open(\''+link+'\',\'_system\',\'location=no\')"><i class="fa fa-chevron-circle-right pull-right"></i><h6>'+title+'</h6><span>'+date_string+'</span></a>';
-				if(page_count<per_page){
-					li.style.display = 'block';
-				}
-				if(page_count%per_page==0){
-					page_data++;
-				}
-				li.setAttribute("data-page",page_data);
-				list.appendChild(li);
-				page_count++;
-			}
-			artykulyDiv.innerHTML = '<ul>'+list.innerHTML+'</ul>';
-			if(!articles_pagination_loaded){
-				$("body").prepend('<div class="text-center pagination_outer articles_pagination_outer"><div class="articles_pagination pagination"><a href="#" class="first" data-action="first">&laquo;</a><a href="#" class="previous" data-action="previous">&lsaquo;</a><input type="text" readonly="readonly" data-max-page="'+Math.round((c.length/per_page))+'" /><a href="#" class="next" data-action="next">&rsaquo;</a><a href="#" class="last" data-action="last">&raquo;</a></div></div>');
-				articles_pagination_loaded = true;
-				$('.articles_pagination').jqPagination({
-					paged:function(page) {
-						$('#artykuly ul li').hide();
-						$('#artykuly ul li[data-page="'+page+'"]').show();
+			if(articles_first_load){
+				articles_first_load = false;
+				$.ajax({
+					url: artykulyUrl,
+					type: 'GET',
+					async: true,
+					cache: false,
+					dataType: 'xml',
+					timeout: 5000,
+					success: function(response){
+						if(typeof response != 'undefined'){
+							artykuly = response;
+							renderArtykuly();
+							artykuly_loaded = true;
+						} else {
+							artykulyDiv.innerHTML = '<div class="panel text-center">Przepraszamy ale nie udało się wgrać aktualności.</div>';
+						}
+					},
+					error: function(){
+						artykulyDiv.innerHTML = '<div class="panel text-center">Przepraszamy ale nie udało się wgrać aktualności.</div>';
 					}
 				});
 			}
 		} else {
-			artykulyDiv.innerHTML = '<div class="panel text-center">Włącz internet aby pobrać najnowsze aktualności.<br /><br /><a onclick="locationreload(\'page2\');"><i class="fa fa-refresh"></i> odśwież</a></div>';
+			window.plugins.toast.showLongCenter('Brak połączenia z internetem.',function(a){},function(b){});
+			artykulyDiv.innerHTML = '<div class="panel text-center">Włącz internet aby pobrać najnowsze aktualności.<br /><br /><a onclick="feedArtykuly();"><i class="fa fa-refresh"></i> odśwież</a></div>';
 		}
+	}
+	function renderArtykuly(){
+		var per_page = 10;
+		var list = document.createElement('ul');
+		var	xmlDoc = $(artykuly).children();
+		var c = $(xmlDoc).find('item');
+		var months = ["Stycznia", "Lutego", "Marca", "Kwietnia", "Maja", "Czerwca", "Lipca", "Sierpnia", "Września", "Października", "Listopada", "Grudnia"];
+		var page_count = 0;
+		var page_data = 0;
+		for(var i=0;i<c.length;i++){
+			var d = $(c[i]);
+			var title = $(d[0]).find('title').text();
+			var link = $(d[0]).find('link').text();
+			var pubDate = $(d[0]).find('pubDate').text();
+			var _date = new Date(Date.parse(pubDate));
+			var date_string = _date.getDate() + " " + months[_date.getMonth()] + " " + _date.getFullYear();
+			var li = document.createElement('li');
+			li.innerHTML = '<a onclick="window.open(\''+link+'\',\'_system\',\'location=no\')"><i class="fa fa-chevron-circle-right pull-right"></i><h6>'+title+'</h6><span>'+date_string+'</span></a>';
+			if(page_count<per_page){
+				li.style.display = 'block';
+			}
+			if(page_count%per_page==0){
+				page_data++;
+			}
+			li.setAttribute("data-page",page_data);
+			list.appendChild(li);
+			page_count++;
+		}
+		artykulyDiv.innerHTML = '<ul>'+list.innerHTML+'</ul>';
+		$("body").prepend('<div class="text-center pagination_outer articles_pagination_outer"><div class="articles_pagination pagination"><a href="#" class="first" data-action="first">&laquo;</a><a href="#" class="previous" data-action="previous">&lsaquo;</a><a href="#" class="next" data-action="next">&rsaquo;</a><a href="#" class="last" data-action="last">&raquo;</a><div class="pagination-input-outer"><input type="text" readonly="readonly" data-max-page="'+Math.round((c.length/per_page))+'" /></div></div></div>');
+		$('.articles_pagination').jqPagination({
+			paged:function(page) {
+				$('#artykuly ul li').hide();
+				$('#artykuly ul li[data-page="'+page+'"]').show();
+			}
+		});
+		$(".articles_pagination_outer").fadeOut(100);
+		$(document).on("pageshow","#page2",function(){
+			$(".articles_pagination_outer").fadeIn(200);
+		});
+		$(document).on("pagebeforehide","#page2",function(){
+			$(".articles_pagination_outer").fadeOut(100);
+		});
 	}
 	function checkVersion(){
 		$.ajax({
@@ -258,17 +281,23 @@ var	warsztaty = [],
 			cache: false,
 			data: {type:"version"},
 			dataType: 'json',
+			timeout: 5000,
 			success: function(response){
-				if(supports_html5_storage()){
-					if(typeof localStorage["version"] != 'undefined' ){
-						var _local_version = JSON.parse(localStorage["version"]);
-						if( parseInt(_local_version.version) != parseInt(response.version) ) {
+				if(development){
+					localStorage["version"] = JSON.stringify(response);
+					new_version = true;
+				} else {
+					if(supports_html5_storage()){
+						if(typeof localStorage["version"] != 'undefined' ){
+							var _local_version = JSON.parse(localStorage["version"]);
+							if( parseInt(_local_version.version) != parseInt(response.version) ) {
+								localStorage["version"] = JSON.stringify(response);
+								new_version = true;
+							}
+						} else {
 							localStorage["version"] = JSON.stringify(response);
 							new_version = true;
 						}
-					} else {
-						localStorage["version"] = JSON.stringify(response);
-						new_version = true;
 					}
 				}
 			}
@@ -283,6 +312,7 @@ var	warsztaty = [],
 				cache: false,
 				data: {type:"list"},
 				dataType: 'json',
+				timeout: 10000,
 				success: function(response){
 					if(typeof response != 'undefined'){
 						warsztaty = response;
@@ -302,7 +332,7 @@ var	warsztaty = [],
 	function renderWarsztaty(filter){
 		_warsztaty = warsztaty;
 		if(!warsztaty_pagination_loaded){
-			$("body").prepend('<div class="text-center pagination_outer warsztaty_pagination_outer"><div class="relative"><div class="warsztaty_pagination pagination"><a href="#" class="first" data-action="first">&laquo;</a><a href="#" class="previous" data-action="previous">&lsaquo;</a><input type="text" readonly="readonly" /><a href="#" class="next" data-action="next">&rsaquo;</a><a href="#" class="last" data-action="last">&raquo;</a></div></div></div>');
+			$("body").prepend('<div class="text-center pagination_outer warsztaty_pagination_outer"><div class="relative"><div class="warsztaty_pagination pagination"><a href="#" class="first" data-action="first">&laquo;</a><a href="#" class="previous" data-action="previous">&lsaquo;</a><a href="#" class="next" data-action="next">&rsaquo;</a><a href="#" class="last" data-action="last">&raquo;</a><div class="pagination-input-outer"><input type="text" readonly="readonly" /></div></div></div></div>');
 			if(!mapRenderWarsztaty){
 				$(".warsztaty_pagination_outer").fadeIn(200);
 			}
@@ -353,7 +383,7 @@ var	warsztaty = [],
 				
 				var _tmp = {};
 				$.each(use_warsztaty,function(i,item){
-					if(item.filtr == wf) {
+					if(item.filtr.toLowerCase().escapeDiacritics() == wf) {
 						_tmp[i] = item;
 					}
 				});
@@ -871,116 +901,144 @@ var	warsztaty = [],
 		$(".input-outer").hide();
 	}
 	function reloadScripts(){
+		$("header ul.list-2 li a").removeClass("active");
+		var targetID = $(".ui-page-active").attr('id');
+		$('header ul.list-2 li a[href="'+targetID+'"]').addClass("active");
+		$("header .logo").on("click",function(){
 			$("header ul.list-2 li a").removeClass("active");
-			var targetID = $(".ui-page-active").attr('id');
+		});
+		$(document).on("pagebeforechange",function(e,eventData){
+			$("header ul.list-2 li a").removeClass("active");
+			targetID = eventData.toPage;
 			$('header ul.list-2 li a[href="'+targetID+'"]').addClass("active");
-			$("header .logo").on("click",function(){
-				$("header ul.list-2 li a").removeClass("active");
-			});
-			$(document).on("pagebeforechange",function(e,eventData){
-				$("header ul.list-2 li a").removeClass("active");
-				targetID = eventData.toPage;
-				$('header ul.list-2 li a[href="'+targetID+'"]').addClass("active");
-			});
-			$(".loader").animate({"opacity":0},500,"easeOutExpo",function(){this.remove();});
-			$(".clearAddress").on("click",function(){
-				$("#address").val('');
-			});
-			$('#wycena').isHappy({
-				fields: {
-					'#formtyp': {
-						required: true,
-						message: 'pole wymagane'
-					},
-					'#vin': {
-						required: true,
-						message: 'pole wymagane'
-					},
-					'#marka': {
-						required: true,
-						message: 'pole wymagane'
-					},
-					'#rok': {
-						required: true,
-						message: 'pole wymagane'
-					},
-					'#paliwo': {
-						required: true,
-						message: 'pole wymagane'
-					},
-					'#rejestr': {
-						required: true,
-						message: 'pole wymagane'
-					},
-					'#usluga': {
-						required: true,
-						message: 'pole wymagane'
-					},
-					'#email': {
-						required: true,
-						message: 'pole wymagane'
-					},
-					'#tel': {
-						required: true,
-						message: 'pole wymagane'
-					},
-					'#miasto': {
-						required: true,
-						message: 'pole wymagane'
-					}
+		});
+		$(".loader").animate({"opacity":0},500,"easeOutExpo",function(){this.remove();});
+		$(".clearAddress").on("click",function(){
+			$("#address").val('');
+		});
+		$('#wycena').isHappy({
+			fields: {
+				'#formtyp': {
+					required: true,
+					message: 'pole wymagane'
 				},
-				submitButton:'.happybutton',
-				happy:function(){
-					var mailbody = '<p>Dane z formularza:</p><p>typ auta: '+$("#formtyp").val()+'<br />numer VIN: '+$("#vin").val()+'<br />marka, model, silnik: '+$("#marka").val()+'<br />rok produkcji: '+$("#rok").val()+'<br />rodzaj paliwa: '+$("#paliwo").val()+'<br />numer rejestracyjny: '+$("#rejestr").val()+'<br />usługa do wyceny: '+$("#usluga").val()+'<br />e-mail: '+$("#email").val()+'<br />numer telefonu: '+$("#tel").val()+'<br />miasto: '+$("#miasto").val()+'</p>';
-					//window.plugins.EmailComposer.showEmailComposerWithCallback(null,subject,mailbody1,[form_email],[],[],true,[]);
-					cordova.plugins.email.open({
-						app: 'mailto',
-						to:[form_email],
-						subject:'Zapytanie z aplikacji mobilnej Inter Cars sieć warsztatów.',
-						body:mailbody,
-						isHtml:true
-					});
+				'#vin': {
+					required: true,
+					message: 'pole wymagane'
+				},
+				'#marka': {
+					required: true,
+					message: 'pole wymagane'
+				},
+				'#rok': {
+					required: true,
+					message: 'pole wymagane'
+				},
+				'#paliwo': {
+					required: true,
+					message: 'pole wymagane'
+				},
+				'#rejestr': {
+					required: true,
+					message: 'pole wymagane'
+				},
+				'#usluga': {
+					required: true,
+					message: 'pole wymagane'
+				},
+				'#email': {
+					required: true,
+					message: 'pole wymagane'
+				},
+				'#tel': {
+					required: true,
+					message: 'pole wymagane'
+				},
+				'#miasto': {
+					required: true,
+					message: 'pole wymagane'
 				}
-			});
-			if(gotConnection()){
-				feedArtykuly();
-				checkVersion();
-				if(new_version) {
-					feedWarsztaty();
-				} else {
-					warsztaty_from_file = true;
-				}
+			},
+			submitButton:'.happybutton',
+			happy:function(){
+				var mailbody = '<p>Dane z formularza:</p><p>typ auta: '+$("#formtyp").val()+'<br />numer VIN: '+$("#vin").val()+'<br />marka, model, silnik: '+$("#marka").val()+'<br />rok produkcji: '+$("#rok").val()+'<br />rodzaj paliwa: '+$("#paliwo").val()+'<br />numer rejestracyjny: '+$("#rejestr").val()+'<br />usługa do wyceny: '+$("#usluga").val()+'<br />e-mail: '+$("#email").val()+'<br />numer telefonu: '+$("#tel").val()+'<br />miasto: '+$("#miasto").val()+'</p>';
+				//window.plugins.EmailComposer.showEmailComposerWithCallback(null,subject,mailbody1,[form_email],[],[],true,[]);
+				cordova.plugins.email.open({
+					app: 'mailto',
+					to:[form_email],
+					subject:'Zapytanie z aplikacji mobilnej Inter Cars sieć warsztatów.',
+					body:mailbody,
+					isHtml:true
+				});
+			}
+		});
+		if(gotConnection()){
+			feedArtykuly();
+			checkVersion();
+			if(new_version) {
+				feedWarsztaty();
 			} else {
-				if(!warsztaty_loaded){
-					warsztaty_from_file = true;
+				warsztaty_from_file = true;
+			}
+		} else {
+			if(!warsztaty_loaded){
+				warsztaty_from_file = true;
+			}
+		}
+		
+		hideLoader = true;
+		
+		/*$(".articles_pagination_outer").fadeOut(100);
+		$(document).on("pagebeforeshow","#page2",function(){
+			if(articles_first_load){
+				articles_first_load = false;
+				if(artykuly_loaded){
+					renderArtykuly();
+				} else {
+					if(gotConnection()) {
+						artykulyDiv.innerHTML = '<div class="panel text-center">Nie udało się wgrać aktualności.</div>';
+					} else {
+						artykulyDiv.innerHTML = '<div class="panel text-center">Włącz internet aby pobrać najnowsze aktualności.<br /><br /><a onclick="locationreload(\'page2\');"><i class="fa fa-refresh"></i> odśwież</a></div>';
+					}
 				}
 			}
-			
+		});
+		$(document).on("pageshow","#page2",function(){
+			$(".articles_pagination_outer").fadeIn(200);
+		});
+		$(document).on("pagebeforehide","#page2",function(){
 			$(".articles_pagination_outer").fadeOut(100);
-			$(".warsztaty_pagination_outer").fadeOut(100);
-			
-			$(document).on("pagebeforeshow","#page2",function(){
-				if(articles_first_load){
-					articles_first_load = false;
-					if(artykuly_loaded){
-						renderArtykuly();
-					} else {
-						if(gotConnection()) {
-							artykulyDiv.innerHTML = '<div class="panel text-center">Nie udało się wgrać aktualności.</div>';
-						} else {
-							artykulyDiv.innerHTML = '<div class="panel text-center">Włącz internet aby pobrać najnowsze aktualności.<br /><br /><a onclick="locationreload(\'page2\');"><i class="fa fa-refresh"></i> odśwież</a></div>';
-						}
-					}
+		});*/
+		
+		$(".warsztaty_pagination_outer").fadeOut(100);
+		$(document).on("pagebeforeshow","#page3",function(){
+			if(warsztaty_first_load){
+				warsztaty_first_load = false;
+				if(warsztaty_from_file){
+					window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fs){
+						fs.root.getFile(warsztaty_path, {create:false}, fileExists, fileNotExists);
+					}, warsztatyFailFS);
+				} else if(warsztaty_loaded){
+					renderWarsztaty();
+				} else {
+					warsztatyLoadError();
 				}
-			});
-			$(document).on("pageshow","#page2",function(){
-				$(".articles_pagination_outer").fadeIn(200);
-			});
-			$(document).on("pagebeforehide","#page2",function(){
-				$(".articles_pagination_outer").fadeOut(100);
-			});
-			$(document).on("pagebeforeshow","#page3",function(){
+			}
+		});
+		$(document).on("pageshow","#page3",function(){
+			if(warsztaty_pagination_loaded){
+				$(".warsztaty_pagination_outer").fadeIn(200);
+			}
+		});
+		$(document).on("pagebeforehide","#page3",function(){
+			$(".warsztaty_pagination_outer").fadeOut(100);
+		});
+		$(document).on("pageshow","#page4",function(){
+			var h = $(window).height() - 109;
+			$("#map_canvas").css({"height":h+"px"});
+			if(gotConnection()){
 				if(warsztaty_first_load){
+					mapRenderWarsztaty = true;
 					warsztaty_first_load = false;
 					if(warsztaty_from_file){
 						window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fs){
@@ -992,92 +1050,66 @@ var	warsztaty = [],
 						warsztatyLoadError();
 					}
 				}
-			});
-			$(document).on("pageshow","#page3",function(){
-				if(warsztaty_pagination_loaded){
-					$(".warsztaty_pagination_outer").fadeIn(200);
-				}
-			});
-			$(document).on("pagebeforehide","#page3",function(){
-				$(".warsztaty_pagination_outer").fadeOut(100);
-			});
-			$(document).on("pageshow","#page4",function(){
-				var h = $(window).height() - 109;
-				$("#map_canvas").css({"height":h+"px"});
-				if(gotConnection()){
-					if(warsztaty_first_load){
-						mapRenderWarsztaty = true;
-						warsztaty_first_load = false;
-						if(warsztaty_from_file){
-							window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fs){
-								fs.root.getFile(warsztaty_path, {create:false}, fileExists, fileNotExists);
-							}, warsztatyFailFS);
-						} else if(warsztaty_loaded){
-							renderWarsztaty();
-						} else {
-							warsztatyLoadError();
-						}
-					}
-					if(!map_first_load){
-						map_first_load = true;
-						var loadComplete = false;
-						var timeStart = 0;
-						var timeEnd = 1000;
-						var everythingLoaded = setInterval(function(){
-							if(warsztaty_loaded && !loadComplete){
-								loadComplete = true;
-								clearInterval(everythingLoaded);
-								if(navigator.geolocation){
-									navigator.geolocation.getCurrentPosition(displayPosition,geolocationError,{timeout:5000});
-								} else {
-									geolocationError();
-								}
+				if(!map_first_load){
+					map_first_load = true;
+					var loadComplete = false;
+					var timeStart = 0;
+					var timeEnd = 1000;
+					var everythingLoaded = setInterval(function(){
+						if(warsztaty_loaded && !loadComplete){
+							loadComplete = true;
+							clearInterval(everythingLoaded);
+							if(navigator.geolocation){
+								navigator.geolocation.getCurrentPosition(displayPosition,geolocationError,{timeout:5000});
 							} else {
-								timeStart++;
+								geolocationError();
 							}
-							if(timeStart == timeEnd){
-								clearInterval(everythingLoaded);
-								mapNotLoaded();
-							}
-						},100);
-					} else {
-						if(navigator.geolocation){
-							navigator.geolocation.getCurrentPosition(displayPosition,geolocationError,{timeout:5000});
 						} else {
-							geolocationError();
+							timeStart++;
 						}
-					}
+						if(timeStart == timeEnd){
+							clearInterval(everythingLoaded);
+							mapNotLoaded();
+						}
+					},100);
 				} else {
-					mapNotLoaded();
+					if(navigator.geolocation){
+						navigator.geolocation.getCurrentPosition(displayPosition,geolocationError,{timeout:5000});
+					} else {
+						geolocationError();
+					}
 				}
-			});
-			$(document).on("pageshow","#warsztat",function(){
-				$("#warsztat footer").animate({"bottom":0},500,"easeOutExpo");
-			});
+			} else {
+				mapNotLoaded();
+			}
+		});
+		$(document).on("pageshow","#warsztat",function(){
+			$("#warsztat footer").animate({"bottom":0},500,"easeOutExpo");
+		});
+		if(hideLoader){
+			$("#preloader").animate({"opacity":0},500,"easeOutExpo",function(){this.remove();});
+		}
 	}
 
 var app = {
     initialize: function() {
-        this.bindEvents();
-        this.initFastClick();
-    },
-    bindEvents: function() {
-        document.addEventListener('deviceready', this.onDeviceReady, false);
-		document.addEventListener("load", this.onLoad, false);
-		document.addEventListener("offline", this.onOffline, false);
-		document.addEventListener("online", this.onOnline, false);
-    },
-    initFastClick: function() {
-        window.addEventListener('load', function() {
+		window.addEventListener('load', function() {
             FastClick.attach(document.body);
         },false);
+		if(development){
+			this.onDeviceReady();
+		} else {
+			this.bindEvents();
+		}
     },
-    onDeviceReady: function() {
+	bindEvents: function() {
+		document.addEventListener('deviceready', this.onDeviceReady, false);
+		document.addEventListener("offline", this.onOffline, false);
+		document.addEventListener("online", this.onOnline, false);
+	},
+	onDeviceReady: function() {
 		reloadScripts();
-    },
-	onLoad: function() {
-		
-    },
+	},
 	onOffline: function() {
 		window.plugins.toast.showLongCenter('Brak połączenia z internetem.',function(a){},function(b){});
 	},
@@ -1087,6 +1119,7 @@ var app = {
 		}
 		if(warsztaty_loaded == false){
 			checkVersion();
+			console.log(new_version);
 			if(new_version == true) {
 				feedWarsztaty();
 			} else {
