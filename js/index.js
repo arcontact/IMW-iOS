@@ -914,7 +914,7 @@ var	warsztaty = [],
 			$.ajax({
 				url: warsztatyUrl,
 				type: 'GET',
-				async: true,
+				async: false,
 				cache: false,
 				dataType: 'json',
 				data: {type:"settings"},
