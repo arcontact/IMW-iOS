@@ -40,7 +40,8 @@ footer a{float:left;width:20%;padding:8px}
 #artykuly ul{list-style-type:none;margin-left:0px;margin-right:0px;margin-top:0px;margin-bottom:35px}
 #artykuly ul li{display:none;border:1px solid #f2f2f2;background:#f2f2f2;line-height:normal}
 #artykuly ul li:nth-child(even) {background:#efefef;border-bottom:1px solid #e5e5e5;border-top:1px solid #f5f5f5}
-#artykuly ul li a{display:block;color:#000;padding:.7em 15px}
+#artykuly ul li a{display:block;color:#000;padding:6px 15px 11px 60px;position:relative;}
+#artykuly ul li a img{width:40px;height:40px;position:absolute;top:9px;left:11px;}
 #artykuly ul li a h6{font-family:Lato,sans-serif;font-size:16px;font-weight:bold;margin-top:0px;margin-bottom:0px}
 #artykuly ul li a span{font-size:13px;color:#8a8a8a}
 #artykuly ul li a .fa{margin-top:5px;color:#ddd}

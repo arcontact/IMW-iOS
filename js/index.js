@@ -27,7 +27,7 @@ $(document).ready(function(){$(document.body).transition("init").show()}),functi
 ;(function(e){"use strict";e.jqPagination=function(t,n){var r=this;r.$el=e(t);r.el=t;r.$input=r.$el.find("input");r.$el.data("jqPagination",r);r.init=function(){r.options=e.extend({},e.jqPagination.defaultOptions,n);r.options.max_page===null&&(r.$input.data("max-page")!==undefined?r.options.max_page=r.$input.data("max-page"):r.options.max_page=1);r.$input.data("current-page")!==undefined&&r.isNumber(r.$input.data("current-page"))&&(r.options.current_page=r.$input.data("current-page"));r.$input.removeAttr("readonly");r.updateInput(!0);r.$input.on("focus.jqPagination mouseup.jqPagination",function(t){if(t.type==="focus"){var n=parseInt(r.options.current_page,10);e(this).val(n).select()}if(t.type==="mouseup")return!1});r.$input.on("blur.jqPagination keydown.jqPagination",function(t){var n=e(this),i=parseInt(r.options.current_page,10);if(t.keyCode===27){n.val(i);n.blur()}t.keyCode===13&&n.blur();t.type==="blur"&&r.setPage(n.val())});r.$el.on("click.jqPagination","a",function(t){var n=e(this);if(n.hasClass("disabled"))return!1;if(!t.metaKey&&!t.ctrlKey){t.preventDefault();r.setPage(n.data("action"))}})};r.setPage=function(e,t){if(e===undefined)return r.options.current_page;var n=parseInt(r.options.current_page,10),i=parseInt(r.options.max_page,10);if(isNaN(parseInt(e,10)))switch(e){case"first":e=1;break;case"prev":case"previous":e=n-1;break;case"next":e=n+1;break;case"last":e=i}e=parseInt(e,10);if(isNaN(e)||e<1||e>i){r.setInputValue(n);return!1}r.options.current_page=e;r.$input.data("current-page",e);r.updateInput(t)};r.setMaxPage=function(e,t){if(e===undefined)return r.options.max_page;if(!r.isNumber(e)){console.error("jqPagination: max_page is not a number");return!1}if(e<r.options.current_page){console.error("jqPagination: max_page lower than current_page");return!1}r.options.max_page=e;r.$input.data("max-page",e);r.updateInput(t)};r.updateInput=function(e){var t=parseInt(r.options.current_page,10);r.setInputValue(t);r.setLinks(t);e!==!0&&r.options.paged(t)};r.setInputValue=function(e){var t=r.options.page_string,n=r.options.max_page;t=t.replace("{current_page}",e).replace("{max_page}",n);r.$input.val(t)};r.isNumber=function(e){return!isNaN(parseFloat(e))&&isFinite(e)};r.setLinks=function(e){var t=r.options.link_string,n=parseInt(r.options.current_page,10),i=parseInt(r.options.max_page,10);if(t!==""){var s=n-1;s<1&&(s=1);var o=n+1;o>i&&(o=i);r.$el.find("a.first").attr("href",t.replace("{page_number}","1"));r.$el.find("a.prev, a.previous").attr("href",t.replace("{page_number}",s));r.$el.find("a.next").attr("href",t.replace("{page_number}",o));r.$el.find("a.last").attr("href",t.replace("{page_number}",i))}r.$el.find("a").removeClass("disabled");n===i&&r.$el.find(".next, .last").addClass("disabled");n===1&&r.$el.find(".previous, .first").addClass("disabled")};r.callMethod=function(t,n,i){switch(t.toLowerCase()){case"option":if(i===undefined&&typeof n!="object")return r.options[n];var s={trigger:!0},o=!1;e.isPlainObject(n)&&!i?e.extend(s,n):s[n]=i;var u=s.trigger===!1;s.current_page!==undefined&&(o=r.setPage(s.current_page,u));s.max_page!==undefined&&(o=r.setMaxPage(s.max_page,u));o===!1&&console.error("jqPagination: cannot get / set option "+n);return o;case"destroy":r.$el.off(".jqPagination").find("*").off(".jqPagination");break;default:console.error('jqPagination: method "'+t+'" does not exist');return!1}};r.init()};e.jqPagination.defaultOptions={current_page:1,link_string:"",max_page:null,page_string:"Strona {current_page} z {max_page}",paged:function(){}};e.fn.jqPagination=function(){var t=this,n=e(t),r=Array.prototype.slice.call(arguments),i=!1;if(typeof r[0]=="string"){r[2]===undefined?i=n.first().data("jqPagination").callMethod(r[0],r[1]):n.each(function(){i=e(this).data("jqPagination").callMethod(r[0],r[1],r[2])});return i}t.each(function(){new e.jqPagination(this,r[0])})}})(Zepto);if(!console){var console={},func=function(){return!1};console.log=func;console.info=func;console.warn=func;console.error=func};
 $(document.body).transition('options', {defaultPageTransition : 'fade', domCache : false});
 
-var development = true;
+var development = false;
 
 var	warsztaty = [],
 	_warsztaty = [],
@@ -205,7 +205,8 @@ var	warsztaty = [],
 			if(articles_first_load){
 				articles_first_load = false;
 				$.ajax({
-					url: artykulyUrl,
+					//url: artykulyUrl,
+					url: 'http://api.arcontact.pl/icw/feed.php',
 					type: 'GET',
 					async: true,
 					cache: false,
@@ -245,8 +246,14 @@ var	warsztaty = [],
 			var pubDate = $(d[0]).find('pubDate').text();
 			var _date = new Date(Date.parse(pubDate));
 			var date_string = _date.getDate() + " " + months[_date.getMonth()] + " " + _date.getFullYear();
+			var thumbUrl = 'img/thumb.png';
+			var thumb = d[0].getElementsByTagNameNS('*','thumbnail');
+			if(typeof thumb != 'undefined'){
+				var thumbUrl = thumb[0].attributes.getNamedItem('url').value;
+			}
+			thumbHTML = '<img src="'+thumbUrl+'" alt="motofakty">';
 			var li = document.createElement('li');
-			li.innerHTML = '<a onclick="window.open(\''+link+'\',\'_system\',\'location=no\')"><i class="fa fa-chevron-circle-right pull-right"></i><h6>'+title+'</h6><span>'+date_string+'</span></a>';
+			li.innerHTML = '<a onclick="window.open(\''+link+'\',\'_system\',\'location=no\')">'+thumbHTML+'<i class="fa fa-chevron-circle-right pull-right"></i><h6>'+title+'</h6><span>'+date_string+'</span></a>';
 			if(page_count<per_page){
 				li.style.display = 'block';
 			}
@@ -258,20 +265,22 @@ var	warsztaty = [],
 			page_count++;
 		}
 		artykulyDiv.innerHTML = '<ul>'+list.innerHTML+'</ul>';
-		$("body").prepend('<div class="text-center pagination_outer articles_pagination_outer"><div class="articles_pagination pagination"><a href="#" class="first" data-action="first">&laquo;</a><a href="#" class="previous" data-action="previous">&lsaquo;</a><a href="#" class="next" data-action="next">&rsaquo;</a><a href="#" class="last" data-action="last">&raquo;</a><div class="pagination-input-outer"><input type="text" readonly="readonly" data-max-page="'+Math.round((c.length/per_page))+'" /></div></div></div>');
-		$('.articles_pagination').jqPagination({
-			paged:function(page) {
-				$('#artykuly ul li').hide();
-				$('#artykuly ul li[data-page="'+page+'"]').show();
-			}
-		});
-		$(".articles_pagination_outer").fadeOut(100);
-		$(document).on("pageshow","#page2",function(){
-			$(".articles_pagination_outer").fadeIn(200);
-		});
-		$(document).on("pagebeforehide","#page2",function(){
+		if(c.length > per_page){
+			$("body").prepend('<div class="text-center pagination_outer articles_pagination_outer"><div class="articles_pagination pagination"><a href="#" class="first" data-action="first">&laquo;</a><a href="#" class="previous" data-action="previous">&lsaquo;</a><a href="#" class="next" data-action="next">&rsaquo;</a><a href="#" class="last" data-action="last">&raquo;</a><div class="pagination-input-outer"><input type="text" readonly="readonly" data-max-page="'+Math.round((c.length/per_page))+'" /></div></div></div>');
+			$('.articles_pagination').jqPagination({
+				paged:function(page) {
+					$('#artykuly ul li').hide();
+					$('#artykuly ul li[data-page="'+page+'"]').show();
+				}
+			});
 			$(".articles_pagination_outer").fadeOut(100);
-		});
+			$(document).on("pageshow","#page2",function(){
+				$(".articles_pagination_outer").fadeIn(200);
+			});
+			$(document).on("pagebeforehide","#page2",function(){
+				$(".articles_pagination_outer").fadeOut(100);
+			});
+		}
 	}
 	function checkVersion(){
 		$.ajax({
@@ -900,7 +909,37 @@ var	warsztaty = [],
 		$("#map_canvas").addClass("loaded").html('<div class="panel text-center">Włącz internet aby załadować mapę.<br /><br /><a onclick="locationreload(\'page4\');"><i class="fa fa-refresh"></i> odśwież</a></div>');
 		$(".input-outer").hide();
 	}
+	function feedSettings(){
+		if(gotConnection()){
+			$.ajax({
+				url: warsztatyUrl,
+				type: 'GET',
+				async: true,
+				cache: false,
+				dataType: 'json',
+				data: {type:"settings"},
+				timeout: 5000,
+				success: function(response){
+					if(typeof response.artykulyUrl != 'undefined'){
+						artykulyUrl = response.artykulyUrl;
+					}
+					if(typeof response.form_email != 'undefined'){
+						form_email = response.form_email;
+					}
+					if(typeof response.startingLongitude != 'undefined'){
+						startingLongitude = response.startingLongitude;
+					}
+					if(typeof response.startingLatitude != 'undefined'){
+						startingLatitude = response.startingLatitude;
+					}
+				}
+			});
+		} else {
+			window.plugins.toast.showLongCenter('Brak połączenia z internetem.',function(a){},function(b){});
+		}
+	}
 	function reloadScripts(){
+		feedSettings();
 		$("header ul.list-2 li a").removeClass("active");
 		var targetID = $(".ui-page-active").attr('id');
 		$('header ul.list-2 li a[href="'+targetID+'"]').addClass("active");
